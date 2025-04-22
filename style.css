@@ -2,8 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Add any custom base styles here if needed */
+/* Add custom styles below */
+#historyList li {
+  /* Slower transition */
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+  opacity: 1;
+  transform: translateX(0) scale(1); /* Add scale to transition */
+  transform-origin: center; /* Scale from the center */
+  /* Basic card styling for history items */
+  @apply bg-gray-100 bg-opacity-80 rounded-lg p-3 shadow-md border border-gray-200;
+}
+
+#historyList li.history-item-enter {
+  /* Initial state for animation */
+  opacity: 0;
+  transform: translateX(-50px) scale(0.9); /* Start slightly left and smaller */
+}
+
+/* Styling for elements within history cards */
+#historyList li h4 {
+  @apply text-lg font-semibold mb-1 text-gray-800;
+}
+#historyList li img {
+  @apply mx-auto mb-2 w-16 h-16; /* Smaller image */
+}
+#historyList li p {
+  @apply text-xs text-gray-600 leading-tight; /* Smaller text */
+}
+
+/* Placeholder styling */
+#historyList li.italic {
+  @apply bg-transparent shadow-none border-none p-0; /* Reset card styles for placeholder */
+}
+
+/* Ensure gradient covers full height if not already handled by Tailwind */
 body {
-  /* Example: Ensure gradient covers full height */
   min-height: 100vh;
 }
