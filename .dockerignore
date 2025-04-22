@@ -1,0 +1,41 @@
+# ---- Build Stage ----
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+# Copy package files and install dependencies
+COPY package.json package-lock.json* ./
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Build the application
+RUN npm run build
+
+# ---- Serve Stage ----
+FROM nginx:stable-alpine
+
+# Copy built assets from the build stage
+COPY --from=build /app/dist /usr/share/nginx/html
+
+# Copy custom Nginx config if needed (optional, default often works for SPA)
+# COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+# Expose port 80
+EXPOSE 80
+
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
+
+# Ignore dependencies, build output, environment files, logs, and git directory
+node_modules
+dist
+.env
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.DS_Store
+.git
+.vscode

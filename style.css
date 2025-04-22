@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add any custom base styles here if needed */
+body {
+  /* Example: Ensure gradient covers full height */
+  min-height: 100vh;
+}

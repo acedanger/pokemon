@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pokémon Finder</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body
+    class="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 min-h-screen flex items-center justify-center p-4"
+  >
+    <div
+      class="bg-white bg-opacity-90 rounded-lg shadow-xl p-6 md:p-10 w-full max-w-md"
+    >
+      <h1 class="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-6">
+        Find Your Pokémon!
+      </h1>
+      <div class="flex flex-col sm:flex-row gap-4 mb-6">
+        <!-- Wrap input and voice button -->
+        <div class="relative flex-grow">
+          <input
+            type="text"
+            id="pokemonName"
+            placeholder="Enter Pokémon name or use mic"
+            class="w-full px-4 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+          />
+          <!-- Microphone Button -->
+          <button
+            id="voiceSearchButton"
+            class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 hover:text-blue-600 focus:outline-none"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12 18.75a6 6 0 0 0 6-6v-1.5m-6 7.5a6 6 0 0 1-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 0 1-3-3V4.5a3 3 0 1 1 6 0v8.25a3 3 0 0 1-3 3Z"
+              />
+            </svg>
+          </button>
+        </div>
+        <button
+          id="searchButton"
+          class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition duration-200 shadow-md"
+        >
+          Search
+        </button>
+      </div>
+      <div id="pokemonInfo" class="mt-6 text-center text-gray-700">
+        <!-- Pokémon info will be displayed here -->
+      </div>
+    </div>
+
+    <script type="module" src="/index.js"></script>
+  </body>
+</html>

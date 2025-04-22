@@ -1,0 +1,30 @@
+{
+  "name": "pokemon",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pokemon for Margot",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "pokemon",
+    "margot"
+  ],
+  "author": "Peter Wood <peter@peterwood.dev>",
+  "license": "ISC",
+  "dependencies": {
+    "pokedex-promise-v2": "^4.2.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.52.0",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "vite": "^6.3.2"
+  }
+}
