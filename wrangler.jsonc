@@ -1,0 +1,7 @@
+{
+  "name": "pokemon",
+  "compatibility_date": "2025-04-22",
+  "assets": {
+    "directory": "./dist"
+  }
+}
