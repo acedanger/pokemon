@@ -1,11 +1,10 @@
 # ---- Build Stage ----
-FROM node:20-alpine AS build
+FROM node:23-slim AS build
 
 WORKDIR /app
 
 # Copy package files and install dependencies
-# Copy package.json AND package-lock.json (if available)
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm install
 
 # Copy the rest of the application code
@@ -15,16 +14,12 @@ COPY . .
 RUN npm run build
 
 # ---- Serve Stage ----
-FROM nginx:stable-alpine
+FROM caddy:2.10.0-alpine
+
+WORKDIR /srv
 
 # Copy built assets from the build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/dist /srv
 
-# Optional: Copy a custom Nginx configuration if needed
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx in the foreground
-CMD ["nginx", "-g", "daemon off;"]
+# Copy Caddy configuration file
+COPY Caddyfile /etc/caddy/Caddyfile

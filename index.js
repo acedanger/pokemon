@@ -1,5 +1,6 @@
-import "/style.css"; // Ensure CSS is imported
+import "/style.css";
 import Pokedex from "pokedex-promise-v2";
+import annyang from "annyang";
 
 const options = {
   protocol: "https",
@@ -16,6 +17,8 @@ const pokemonNameInput = document.getElementById("pokemonName");
 const pokemonInfoDiv = document.getElementById("pokemonInfo");
 const voiceSearchButton = document.getElementById("voiceSearchButton");
 const historyList = document.getElementById("historyList");
+const themeToggleButton = document.getElementById("themeToggleButton");
+const themeIcon = document.getElementById("themeIcon");
 
 // --- State ---
 let searchHistory = []; // Now stores full data objects
@@ -36,8 +39,8 @@ const updateHistoryDisplay = (justAddedName = null) => {
 
       // Determine scale based on index
       let scale = 1.0; // Default scale for the newest item
-      if (index === 1) scale = 0.8;
-      else if (index === 2) scale = 0.6;
+      if (index === 1) scale = 0.9;
+      else if (index === 2) scale = 0.8;
 
       // Apply scale via inline style
       li.style.transform = `scale(${scale})`;
@@ -137,6 +140,34 @@ const searchPokemon = () => {
   pokemon.getPokemonByName(name).then(displayPokemonInfo).catch(displayError);
 };
 
+// Theme toggle logic
+// Removed references to themeText as the text is no longer part of the DOM
+const setTheme = (theme) => {
+  if (theme === "dark") {
+    document.documentElement.classList.add("dark");
+    themeIcon.classList.remove("fa-moon");
+    themeIcon.classList.add("fa-sun");
+  } else {
+    document.documentElement.classList.remove("dark");
+    themeIcon.classList.remove("fa-sun");
+    themeIcon.classList.add("fa-moon");
+  }
+  localStorage.setItem("theme", theme);
+};
+
+// Initialize theme based on device or saved preference
+const savedTheme = localStorage.getItem("theme");
+const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+setTheme(savedTheme || (prefersDark ? "dark" : "light"));
+
+// Toggle theme on button click
+themeToggleButton.addEventListener("click", () => {
+  const currentTheme = document.documentElement.classList.contains("dark")
+    ? "dark"
+    : "light";
+  setTheme(currentTheme === "dark" ? "light" : "dark");
+});
+
 // --- Event Listeners & Voice Search ---
 searchButton.addEventListener("click", searchPokemon);
 
@@ -158,6 +189,14 @@ if (SpeechRecognition) {
   recognition.maxAlternatives = 1;
 
   voiceSearchButton.addEventListener("click", () => {
+    const voiceOverlay = document.getElementById("voiceOverlay");
+    voiceOverlay.classList.remove("hidden");
+
+    // Simulate listening for 3 seconds, then hide the overlay
+    setTimeout(() => {
+      voiceOverlay.classList.add("hidden");
+    }, 3000);
+
     try {
       pokemonNameInput.placeholder = "Listening...";
       recognition.start();
@@ -192,8 +231,48 @@ if (SpeechRecognition) {
     pokemonNameInput.placeholder = "Enter Pokémon name or use mic";
     voiceSearchButton.classList.remove("text-red-500");
   };
+} else if (annyang) {
+  console.warn("Using annyang as a fallback for voice recognition.");
+
+  annyang.addCommands({
+    "*pokemonName": (pokemonName) => {
+      pokemonNameInput.value = pokemonName.toLowerCase();
+      searchPokemon();
+    },
+  });
+
+  voiceSearchButton.addEventListener("click", () => {
+    const voiceOverlay = document.getElementById("voiceOverlay");
+    voiceOverlay.classList.remove("hidden");
+
+    // Simulate listening for 3 seconds, then hide the overlay
+    setTimeout(() => {
+      voiceOverlay.classList.add("hidden");
+    }, 3000);
+
+    try {
+      pokemonNameInput.placeholder = "Listening...";
+      annyang.start();
+      voiceSearchButton.classList.add("text-red-500");
+    } catch (e) {
+      console.error("Annyang already started.", e);
+      pokemonNameInput.placeholder = "Enter Pokémon name or use mic";
+    }
+  });
+
+  annyang.addCallback("end", () => {
+    pokemonNameInput.placeholder = "Enter Pokémon name or use mic";
+    voiceSearchButton.classList.remove("text-red-500");
+  });
+
+  annyang.addCallback("error", (error) => {
+    pokemonInfoDiv.innerHTML = `<p class="text-red-500">Voice recognition error: ${error}</p>`;
+    console.error("Annyang error:", error);
+    pokemonNameInput.placeholder = "Enter Pokémon name or use mic";
+    voiceSearchButton.classList.remove("text-red-500");
+  });
 } else {
-  console.warn("Web Speech API not supported in this browser.");
+  console.warn("Web Speech API and annyang not supported in this browser.");
   voiceSearchButton.style.display = "none";
 }
 

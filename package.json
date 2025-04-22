@@ -18,7 +18,10 @@
   "author": "Peter Wood <peter@peterwood.dev>",
   "license": "ISC",
   "dependencies": {
-    "pokedex-promise-v2": "^4.2.1"
+    "@fortawesome/fontawesome-free": "^6.7.2",
+    "annyang": "^2.6.1",
+    "pokedex-promise-v2": "^4.2.1",
+    "wrangler": "^4.12.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
