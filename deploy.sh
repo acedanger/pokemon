@@ -2,16 +2,7 @@
 
 set -e
 
-# This script is used to deploy the Pokemon Finder application using Docker.
-# It stops any existing container, builds a new Docker image, and runs the container.
-# Ensure the script is run from the directory containing the Dockerfile
-# and the application code.
-
-# This script also includes a testing stage using Playwright.
-# It builds the application using Vite, starts a preview server, and runs Playwright tests.
-# If the tests pass, it proceeds with the Docker deployment.
-
-# Usage: ./deploy.sh
+# filepath: /home/acedanger/dev/pokemon/deploy.sh
 
 # Define container and image names
 CONTAINER_NAME="pokemon-app"
@@ -19,6 +10,14 @@ IMAGE_NAME="pokemon-finder"
 HOST_PORT=8080
 CONTAINER_PORT=80
 PREVIEW_PORT=4173 # Default Vite preview port
+RUN_TESTS=false # Default: do not run tests
+
+# --- Argument Parsing ---
+# Check if the first argument is --test or -t
+if [[ "$1" == "--test" || "$1" == "-t" ]]; then
+  RUN_TESTS=true
+  echo "Test flag provided. Tests will be run before deployment."
+fi
 
 # --- Pre-checks and Build ---
 echo "Ensuring dependencies are installed..."
@@ -35,34 +34,49 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
-# --- Testing Stage ---
-echo "Starting Vite preview server for testing..."
-# Start in background and get PID
-npm run preview -- --port $PREVIEW_PORT &
-PREVIEW_PID=$!
+# --- Testing Stage (Conditional) ---
+if [ "$RUN_TESTS" = true ]; then
+  echo "--- Running Testing Stage ---"
+  echo "Starting Vite preview server for testing..."
+  # Start in background and get PID
+  npm run preview -- --port $PREVIEW_PORT &
+  PREVIEW_PID=$!
 
-# Wait a moment for the server to start (adjust sleep time if needed)
-sleep 5
+  # Wait a moment for the server to start (adjust sleep time if needed)
+  echo "Waiting for preview server to start (PID: $PREVIEW_PID)..."
+  sleep 5 # Adjust as necessary
 
-echo "Running Playwright tests..."
-# Run tests; Playwright will use http://localhost:4173 based on test config/defaults
-npx playwright test
+  # Check if server is running (optional but good practice)
+  if ! kill -0 $PREVIEW_PID 2>/dev/null; then
+      echo "Preview server failed to start!"
+      # Attempt to kill if PID exists but process doesn't respond to -0
+      kill $PREVIEW_PID 2>/dev/null || true
+      exit 1
+  fi
 
-TEST_RESULT=$?
+  echo "Running Playwright tests..."
+  # Run tests; Playwright will use http://localhost:4173 based on test config/defaults
+  npx playwright test
+  TEST_RESULT=$?
 
-echo "Stopping Vite preview server (PID: $PREVIEW_PID)..."
-kill $PREVIEW_PID
-# Wait for the process to terminate
-wait $PREVIEW_PID 2>/dev/null
+  echo "Stopping Vite preview server (PID: $PREVIEW_PID)..."
+  # Send SIGTERM first for graceful shutdown, then SIGKILL if needed
+  kill $PREVIEW_PID || true
+  # Wait for the process to terminate
+  wait $PREVIEW_PID 2>/dev/null
 
-if [ $TEST_RESULT -ne 0 ]; then
-  echo "Playwright tests failed! Aborting deployment."
-  exit 1
+  if [ $TEST_RESULT -ne 0 ]; then
+    echo "Playwright tests failed! Aborting deployment."
+    exit 1
+  else
+    echo "Playwright tests passed."
+  fi
+  echo "--- Testing Stage Complete ---"
 else
-  echo "Playwright tests passed."
+    echo "Skipping testing stage (run with --test or -t to include)."
 fi
 
-# --- Deployment Stage (Only if tests passed) ---
+# --- Deployment Stage ---
 echo "Proceeding with Docker deployment..."
 
 # Stop the existing container (ignore errors if it doesn't exist)
