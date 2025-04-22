@@ -9,7 +9,7 @@ This is a Pokémon finder web application built with Vite, Tailwind CSS, and van
 *   **History:**
     *   Displays the last 3 successfully searched Pokémon.
     *   Stores the full data object returned by the API for each history item.
-    *   The most recent item is displayed at 100% scale, the second at 80%, the third at 60%.
+    *   The most recent item is displayed at 100% scale, the second at 90%, the third at 80%.
     *   When a new Pokémon is successfully searched:
         *   Any existing entry for that Pokémon is removed from the history array.
         *   The new data object is added to the *beginning* of the history array.
@@ -17,6 +17,7 @@ This is a Pokémon finder web application built with Vite, Tailwind CSS, and van
         *   The history display is re-rendered.
         *   The newly added/moved item animates in with a slide/fade effect (0.8s duration).
     *   History items are clickable to re-trigger a search for that Pokémon.
+*   **Icons:** Font Awesome is used for icons, such as the microphone icon in the search input. Ensure the Font Awesome library is included in the project for proper rendering.
 *   **Error Handling:** Displays user-friendly messages, especially for "Not Found" (404) errors. Technical errors are logged to the console.
 
 ## Build & Deployment
