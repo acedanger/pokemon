@@ -62,6 +62,22 @@ body {
   color: #2563eb; /* Matches hover:text-blue-600 */
 }
 
+/* Styling for the voice overlay that dims the page and displays a large microphone icon */
+#voiceOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50; /* Ensure it appears above other elements */
+}
+
+#voiceOverlay i {
+  color: white;
+  font-size: 6rem; /* Large microphone icon */
+}
+
 footer {
   position: fixed;
   bottom: 0;

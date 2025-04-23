@@ -177,6 +177,17 @@ pokemonNameInput.addEventListener("keypress", (event) => {
   }
 });
 
+// Show a dimmed overlay with a large microphone icon when the voice search button is clicked
+voiceSearchButton.addEventListener("click", () => {
+  const voiceOverlay = document.getElementById("voiceOverlay");
+  voiceOverlay.classList.remove("hidden");
+
+  // Simulate listening for 3 seconds, then hide the overlay
+  setTimeout(() => {
+    voiceOverlay.classList.add("hidden");
+  }, 3000);
+});
+
 const SpeechRecognition =
   window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition;
